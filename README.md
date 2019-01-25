@@ -19,3 +19,25 @@ A bash function for mac OS with Valet Plus installed
   - Open a new terminal to load the new command
   - `Cd` to where the site should be installed. E.G. `/var/www`
   - Run `drupal-install SITENAME`. E.G. `drupal-install drupal-8`
+
+
+```
+
+#---------- Function List ---------
+
+function drupal-install() {
+  composer create-project drupal-composer/drupal-project:8.x-dev $1 --stability dev --no-interaction
+  cd $1
+  composer require drupal/admin_toolbar drupal/devel drupal/module_filter
+  valet db create $1
+  drush site:install --site-name $1 --account-pass password --db-url=mysql://root:root@localhost:3306/$1
+  drush en admin_toolbar_tools devel kint module_filter -y
+  cd web
+  valet link $1
+  cd ../
+  # -- Uncomment the below if you have PHP Storm to automatically open the project --
+  # valet phpstorm
+}
+
+#----------------------------------
+```
